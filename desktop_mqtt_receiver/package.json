@@ -1,0 +1,23 @@
+{
+  "name": "idea9101_a1_server",
+  "version": "1.0.0",
+  "description": "Template for use in the IDEA Lab 2022, to allow a p5js sketch to send messages via MQTT",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "p5js",
+    "nodejs",
+    "mqtt"
+  ],
+  "author": "[Ricky Felix, Maria Rita, Flyn, Aunthika]",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "express": "^4.17.3",
+    "mqtt": "^4.3.6",
+    "osc": "^2.4.2",
+    "got": "^12.6.0",
+    "socket.io": "^4.4.1"
+  }
+}
