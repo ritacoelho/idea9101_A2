@@ -47424,16 +47424,16 @@
             /*****************************
     Mathematical Considerations
   ******************************
-    fv ... refers to freedom vector
+  	fv ... refers to freedom vector
   pv ... refers to projection vector
   rp ... refers to reference point
   p  ... refers to to point being operated on
   d  ... refers to distance
-    SETRELATIVE:
+  	SETRELATIVE:
   ============
-    case freedom vector == x-axis:
+  	case freedom vector == x-axis:
   ------------------------------
-                            (pv)
+  	                        (pv)
                        .-'
                 rpd .-'
                  .-*
@@ -47446,16 +47446,16 @@
                           '
               p *----------*-------------- (fv)
                             pm
-      rpdx = rpx + d * pv.x
+  	  rpdx = rpx + d * pv.x
     rpdy = rpy + d * pv.y
-      equation of line b
-       y - rpdy = pvns * (x- rpdx)
-       y = p.y
-       x = rpdx + ( p.y - rpdy ) / pvns
+  	  equation of line b
+  	   y - rpdy = pvns * (x- rpdx)
+  	   y = p.y
+  	   x = rpdx + ( p.y - rpdy ) / pvns
   
   case freedom vector == y-axis:
   ------------------------------
-        * pm
+  	    * pm
       |\
       | \
       |  \
@@ -47474,15 +47474,15 @@
       |        .-'
       *     *-'  d
       p     rp
-      rpdx = rpx + d * pv.x
+  	  rpdx = rpx + d * pv.x
     rpdy = rpy + d * pv.y
-      equation of line b:
+  	  equation of line b:
              pvns ... normal slope to pv
-       y - rpdy = pvns * (x - rpdx)
-       x = p.x
-       y = rpdy +  pvns * (p.x - rpdx)
+  	   y - rpdy = pvns * (x - rpdx)
+  	   x = p.x
+  	   y = rpdy +  pvns * (p.x - rpdx)
   
-    generic case:
+  	generic case:
   -------------
   
                                 .'(fv)
@@ -47501,41 +47501,41 @@
            ...---'''   d
      *--'''
     rp
-        rpdx = rpx + d * pv.x
+  	    rpdx = rpx + d * pv.x
       rpdy = rpy + d * pv.y
-     equation of line b:
+  	 equation of line b:
       pvns... normal slope to pv
-        y - rpdy = pvns * (x - rpdx)
-     equation of freedom vector line:
+  	    y - rpdy = pvns * (x - rpdx)
+  	 equation of freedom vector line:
       fvs ... slope of freedom vector (=fy/fx)
-        y - py = fvs * (x - px)
+  	    y - py = fvs * (x - px)
   
     on pm both equations are true for same x/y
-        y - rpdy = pvns * (x - rpdx)
-        y - py = fvs * (x - px)
-      form to y and set equal:
-        pvns * (x - rpdx) + rpdy = fvs * (x - px) + py
-      expand:
-        pvns * x - pvns * rpdx + rpdy = fvs * x - fvs * px + py
-      switch:
-        fvs * x - fvs * px + py = pvns * x - pvns * rpdx + rpdy
-      solve for x:
-        fvs * x - pvns * x = fvs * px - pvns * rpdx - py + rpdy
+  	    y - rpdy = pvns * (x - rpdx)
+  	    y - py = fvs * (x - px)
+  	  form to y and set equal:
+  	    pvns * (x - rpdx) + rpdy = fvs * (x - px) + py
+  	  expand:
+  	    pvns * x - pvns * rpdx + rpdy = fvs * x - fvs * px + py
+  	  switch:
+  	    fvs * x - fvs * px + py = pvns * x - pvns * rpdx + rpdy
+  	  solve for x:
+  	    fvs * x - pvns * x = fvs * px - pvns * rpdx - py + rpdy
   
-              fvs * px - pvns * rpdx + rpdy - py
+  	          fvs * px - pvns * rpdx + rpdy - py
       x =  -----------------------------------
                    fvs - pvns
-      and:
-        y = fvs * (x - px) + py
+  	  and:
+  	    y = fvs * (x - px) + py
   
-    INTERPOLATE:
+  	INTERPOLATE:
   ============
-    Examples of point interpolation.
-    The weight of the movement of the reference point gets bigger
+  	Examples of point interpolation.
+  	The weight of the movement of the reference point gets bigger
   the further the other reference point is away, thus the safest
   option (that is avoiding 0/0 divisions) is to weight the
   original distance of the other point by the sum of both distances.
-    If the sum of both distances is 0, then move the point by the
+  	If the sum of both distances is 0, then move the point by the
   arithmetic average of the movement of both reference points.
   
   
@@ -47557,7 +47557,7 @@
   
   -------
   
-               (+10)
+  	           (+10)
       rp1o *-------->*rp1
            .         .                      (-10)
            .         .              rp2 *<---------* rpo2
@@ -47583,7 +47583,7 @@
   
                                  (+10)
                             po *-------->* p
-    -------
+  	-------
   
              (+10)
       rp1o *-------->*rp1
@@ -47594,7 +47594,7 @@
                                           (+25)
                             po *----------------------->* p
   
-    vim: set ts=4 sw=4 expandtab:
+  	vim: set ts=4 sw=4 expandtab:
   *****/
             // The Font object
             // This code is based on Array.from implementation for strings in https://github.com/mathiasbynens/Array.from

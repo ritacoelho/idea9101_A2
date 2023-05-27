@@ -48,7 +48,7 @@ function newMqttConnectionSuccess() {
     console.log('*** MQTT connected to host  ' + mqttHost + ':' + mqttPort + '(client id: ' + mqttClientId + ')');
 
     // Subscribe to message
-    const topicList = ['healthy-bubbles-mqtt'];
+    const topicList = ['end-waste-mqtt'];
     mqttClient.subscribe(topicList, {qos:1}, () => {
         console.log(`Subscribed to topics '${topicList}'`)
       });
