@@ -6,3 +6,5 @@ node_modules/
 
 /phone_mqtt_sender/node_modules/
 /phone_mqtt_sender/package-lock.json
+
+.DS_Store

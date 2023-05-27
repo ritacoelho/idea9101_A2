@@ -1,16 +1,54 @@
 /** Server code from IDEA 9101 Lab 2023 Week 4 Mqtt Sender Example **/
+/** http vs https code from IDEA 9101 Lab 2023 Week 8 Example 1 **/
 
 // Port for the Express web server
 var PORT = 3300;
 
 
-
+///////////////////////////////////////////////////////////
+// UNCOMMENT THIS SECTION IF RUNNING FROM DESKTOP - BEGIN
+// Remember to use http:// to start the URL in your browser
+//
+// KEEP IT COMMENTED OUT IF RUNNING FROM MOBILE
+///////////////////////////////////////////////////////////
 // Import Express and initialise the web server
 var express = require('express');
 var app = express();
 var server = app.listen(PORT);
 app.use(express.static('public'));
 console.log('Node.js Express server running on port ' + PORT);
+///////////////////////////////////////////////////////////
+// UNCOMMENT THIS SECTION IF RUNNING FROM DESKTOP - END
+///////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////
+// UNCOMMENT THIS SECTION IF RUNNING FROM MOBILE - BEGIN
+// Remember to use https:// to start the URL in your browser
+//
+// KEEP IT COMMENTED OUT IF RUNNING FROM DESKTOP
+///////////////////////////////////////////////////////////
+// var https = require('https');
+// var fs = require('fs');
+// var express = require('express');
+// var app = express();
+
+// https
+//   .createServer(
+// 		// Provide the private and public key to the server by reading each
+// 		// file's content with the readFileSync() method.
+//     {
+//       key: fs.readFileSync("key.pem"),
+//       cert: fs.readFileSync("cert.pem"),
+//     },
+//     app
+//   )
+//   .listen(PORT, () => {
+//     console.log("Node.js Express HTTPS server is runing at port " + PORT);
+//   });
+// app.use(express.static('public'));
+///////////////////////////////////////////////////////////
+// UNCOMMENT THIS SECTION IF RUNNING FROM MOBILE - END
+///////////////////////////////////////////////////////////
 
 // Import and configure body-parser for Express
 var bodyParser = require('body-parser');
@@ -48,18 +86,7 @@ app.post('/sendMessage', function(request, response) {
 
 	// console.log("POST received: address: " + address + ", value: " + value);
 
-    var mqttTopic = 'healthy-bubbles-mqtt';
-	sendMQTT(mqttTopic, message);
-    response.end("");
-});
-
-// Handle POST requests
-app.post('/sendEndMessage', function(request, response) {
-	var message = request.body.message;
-
-	// console.log("POST received: address: " + address + ", value: " + value);
-
-    var mqttTopic = 'healthy-bubbles-mqtt';
+    var mqttTopic = 'end-waste-mqtt';
 	sendMQTT(mqttTopic, message);
     response.end("");
 });
