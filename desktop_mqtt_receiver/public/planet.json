@@ -1,0 +1,32 @@
+[
+	{
+		"planetStage": 0,
+		"description": "Name the right fruit 🎙️",
+		"image": "./images/Planet-1.webp"
+	},
+	{
+		"planetStage": 1,
+		"description": "You got this 🥳",
+		"image": "./images/Planet-2.webp"
+	},
+	{
+		"planetStage": 2,
+		"description": "Keep going 🤩",
+		"image": "./images/Planet-3.webp"
+	},
+	{
+		"planetStage": 3,
+		"description": "Half way to go 😊",
+		"image": "./images/Planet-4.webp"
+	},
+	{
+		"planetStage": 4,
+		"description": "Only one more! 😍",
+		"image": "./images/Planet-4.webp"
+	},
+	{
+		"planetStage": 5,
+		"description": "You saved the planet! Congratulations 👏",
+		"image": "./images/Planet-4.webp"
+	}
+]

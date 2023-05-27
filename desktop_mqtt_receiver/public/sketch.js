@@ -10,14 +10,13 @@
 		User 'soanvig', answer posted on Jul 20 '17 at 18:23.
 		https://stackoverflow.com/questions/16348031/disable-scrolling-when-touch-moving-certain-element 
 */
-document.addEventListener('touchstart', function(e) {
-    document.documentElement.style.overflow = 'hidden';
+document.addEventListener("touchstart", function (e) {
+	document.documentElement.style.overflow = "hidden";
 });
 
-document.addEventListener('touchend', function(e) {
-    document.documentElement.style.overflow = 'auto';
+document.addEventListener("touchend", function (e) {
+	document.documentElement.style.overflow = "auto";
 });
-
 
 //////////////////////////////////////////////////
 //FIXED SECTION: DO NOT CHANGE THESE VARIABLES
@@ -29,8 +28,10 @@ var socket;
 // CUSTOMIZABLE SECTION - BEGIN: ENTER OUR CODE HERE
 ////////////////////////////////////////////////////
 
-function setup() {
+let currentMode = 0;
+let totalMode = 5;
 
+function setup() {
 	/////////////////////////////////////////////
 	// FIXED SECION - START: DO NOT CHANGE IT
 	/////////////////////////////////////////////
@@ -40,33 +41,22 @@ function setup() {
 	/////////////////////////////////////////////
 	// FIXED SECION - END
 	/////////////////////////////////////////////
-
-	amplitude = 0;
-	colour = color(0,0,0);
 }
 
-function draw() {
-	//gradient background using lerp
-	for (let y = 0; y < height; y++) {
-		let gradientLine = lerpColor(color(238,200,224), color(57,47,90), y / height);
+function draw() {}
 
-		stroke(gradientLine);
-		line(0, y, width, y);
-	}
-
-}
+function planet() {}
 
 ////////////////////////////////////////////////////
 // CUSTOMIZABLE SECTION - END: ENTER OUR CODE HERE
 ////////////////////////////////////////////////////
-
 
 ////////////////////////////////////////////////////
 // MQTT MESSAGE HANDLING
 ////////////////////////////////////////////////////
 function setupMqtt() {
 	socket = io.connect(HOST);
-	socket.on('mqttMessage', receiveMqtt);
+	socket.on("mqttMessage", receiveMqtt);
 }
 
 function receiveMqtt(data) {
@@ -74,8 +64,8 @@ function receiveMqtt(data) {
 	var message = data[1];
 
 	//Receive message and synthesize data
-	if (topic.includes('end-waste-mqtt')) {
-		messageSplit = message.split(';');
+	if (topic.includes("end-waste-mqtt")) {
+		messageSplit = message.split(";");
 		//do what you gotta do with the message, you'll hopefully just receive a number between 0-5 that pertains to the current score
 	}
 }
