@@ -30,6 +30,8 @@ var socket;
 
 let currentMode = 0;
 let totalMode = 5;
+let planetStage = 0;
+let planets = [];
 
 function setup() {
 	/////////////////////////////////////////////
@@ -41,11 +43,97 @@ function setup() {
 	/////////////////////////////////////////////
 	// FIXED SECION - END
 	/////////////////////////////////////////////
+	noLoop();
 }
 
-function draw() {}
+function preload() {
+	loadJSON("./planet.json", "json", jsonCallback);
+}
 
-function planet() {}
+function jsonCallback(data) {
+	planets = data.map((planet) => {
+		return {
+			planetDescription: planet.description,
+			planetImage: loadImage(planet.url),
+		};
+	});
+
+	console.log(planets);
+}
+
+/////////////////////////////////////////////
+// DRAW FUNCTION - START BELOW
+/////////////////////////////////////////////
+
+function draw() {
+	planetRender();
+}
+
+function planetRender() {
+	// create the image
+	// if true then add 1
+	// if false then reduce
+	// if -1 fail
+
+	if (currentMode < totalMode) {
+		planetView();
+		stepper();
+	}
+}
+
+function stepper() {
+	// rect(x, y, w, [h], [tl], [tr], [br], [bl])
+	stroke("ffffff");
+	noFill();
+	// fill("ffffff");
+	// rect(30, 20, 55, 55, 20, 15, 10, 5);
+	rect(60, 20, width / 1.1, 40, 40, 20, 20);
+
+	fill("ffffff");
+	stroke("red");
+	strokeWeight(2);
+	rect(
+		60,
+		20,
+		width / 1.1 / (totalMode - currentMode),
+		40 * (currentMode + 1),
+		40,
+		20,
+		20
+	);
+
+	noStroke();
+	let xPos = 65;
+	let yPos = 80;
+	for (let i = 0; i <= 5; i++) {
+		text(i, xPos, yPos);
+		xPos += width / 1.1 / (totalMode - currentMode) - 3;
+	}
+}
+
+function planetView() {
+	// text
+	// text(str, x, y, [x2], [y2]);
+
+	// for (let i = 0; i < planets.length; i++) {
+	image(
+		planets[currentMode].planetImage,
+		width / 4,
+		height / 4,
+		width / 2,
+		height / 2,
+		0,
+		0,
+		planets.width,
+		planets.height,
+		CONTAIN
+	);
+
+	fill("#ffffff");
+	textSize(16);
+	text(planets[currentMode].planetDescription, width / 1.5, 200);
+	// }
+}
 
 ////////////////////////////////////////////////////
 // CUSTOMIZABLE SECTION - END: ENTER OUR CODE HERE
