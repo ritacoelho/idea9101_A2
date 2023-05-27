@@ -1,1 +1,0 @@
-{"inputUnits":[3],"outputUnits":1,"inputs":{"gestureDuration":{"dtype":"number","min":0,"max":4083},"ampX":{"dtype":"number","min":0,"max":1025},"ampY":{"dtype":"number","min":0,"max":752}},"outputs":{"label":{"dtype":"number","min":0,"max":100}},"isNormalized":true}

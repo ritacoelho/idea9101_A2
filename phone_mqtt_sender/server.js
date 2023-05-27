@@ -86,18 +86,7 @@ app.post('/sendMessage', function(request, response) {
 
 	// console.log("POST received: address: " + address + ", value: " + value);
 
-    var mqttTopic = 'healthy-bubbles-mqtt';
-	sendMQTT(mqttTopic, message);
-    response.end("");
-});
-
-// Handle POST requests
-app.post('/sendEndMessage', function(request, response) {
-	var message = request.body.message;
-
-	// console.log("POST received: address: " + address + ", value: " + value);
-
-    var mqttTopic = 'healthy-bubbles-mqtt';
+    var mqttTopic = 'end-waste-mqtt';
 	sendMQTT(mqttTopic, message);
     response.end("");
 });
