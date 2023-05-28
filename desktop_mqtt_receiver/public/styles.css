@@ -1,0 +1,18 @@
+/* P5.js default CSS */
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+canvas {
+	display: block;
+}
+
+/* edit CSS below */
+
+body {
+	background-image: url("./images/Planet-Background.png");
+	background-repeat: no-repeat;
+	background-size: cover;
+}
