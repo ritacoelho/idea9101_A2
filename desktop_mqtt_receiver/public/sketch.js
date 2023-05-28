@@ -28,9 +28,13 @@ var socket;
 // CUSTOMIZABLE SECTION - BEGIN: ENTER OUR CODE HERE
 ////////////////////////////////////////////////////
 
-let currentMode = 0;
-let totalMode = 5;
-let planetStage = 0;
+// let currentMode = 0;
+// let totalMode = 5;
+
+let currentScore = 0;
+let totalScore = 5;
+
+// let planetStage = 0;
 let planets = [];
 
 function setup() {
@@ -53,12 +57,14 @@ function preload() {
 function jsonCallback(data) {
 	planets = data.map((planet) => {
 		return {
+			planetScore: planet.currentScore,
 			planetDescription: planet.description,
 			planetImage: loadImage(planet.url),
 		};
 	});
 
 	console.log(planets);
+	// console.log(planetScore);
 }
 
 /////////////////////////////////////////////
@@ -75,10 +81,14 @@ function planetRender() {
 	// if false then reduce
 	// if -1 fail
 
-	if (currentMode < totalMode) {
+	if (currentScore < totalScore) {
 		planetView();
 		stepper();
+	} else if (currentScore <= 0) {
+		planetDestroy();
 	}
+
+	// planetDestroy();
 }
 
 function stepper() {
@@ -95,8 +105,8 @@ function stepper() {
 	rect(
 		60,
 		20,
-		width / 1.1 / (totalMode - currentMode),
-		40 * (currentMode + 1),
+		width / 1.1 / (totalScore - currentScore),
+		40 * (currentScore + 1),
 		40,
 		20,
 		20
@@ -107,7 +117,7 @@ function stepper() {
 	let yPos = 80;
 	for (let i = 0; i <= 5; i++) {
 		text(i, xPos, yPos);
-		xPos += width / 1.1 / (totalMode - currentMode) - 3;
+		xPos += width / 1.1 / (totalScore - currentScore) - 3;
 	}
 }
 
@@ -117,7 +127,7 @@ function planetView() {
 
 	// for (let i = 0; i < planets.length; i++) {
 	image(
-		planets[currentMode].planetImage,
+		planets[currentScore].planetImage,
 		width / 4,
 		height / 4,
 		width / 2,
@@ -130,9 +140,38 @@ function planetView() {
 	);
 
 	fill("#ffffff");
-	textSize(16);
-	text(planets[currentMode].planetDescription, width / 1.5, 200);
+	textSize(20);
+	text(planets[currentScore].planetDescription, width / 1.5, 250);
 	// }
+}
+
+function planetDestroy() {
+	// rect(x, y, w, [h], [tl], [tr], [br], [bl])
+	stroke("ffffff");
+	noFill();
+	// fill("ffffff");
+	// rect(30, 20, 55, 55, 20, 15, 10, 5);
+	stroke("red");
+	fill("#FFCCCB");
+	rect(60, 20, width / 1.1, 40, 40, 20, 20);
+
+	image(
+		planets[0].planetImage,
+		width / 4,
+		height / 4,
+		width / 2,
+		height / 2,
+		0,
+		0,
+		planets.width,
+		planets.height,
+		CONTAIN
+	);
+
+	noStroke();
+	fill("#ffffff");
+	textSize(20);
+	text("You Lose. Try Again😭", width / 1.5, 250);
 }
 
 ////////////////////////////////////////////////////
