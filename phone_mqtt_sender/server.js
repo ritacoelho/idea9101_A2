@@ -11,7 +11,7 @@ var PORT = 3300;
 //
 // KEEP IT COMMENTED OUT IF RUNNING FROM MOBILE
 ///////////////////////////////////////////////////////////
-// Import Express and initialise the web server
+//Import Express and initialise the web server
 var express = require('express');
 var app = express();
 var server = app.listen(PORT);
@@ -84,7 +84,7 @@ function mqttConnectionrError(error) {
 app.post('/sendMessage', function(request, response) {
 	var message = request.body.message;
 
-	// console.log("POST received: address: " + address + ", value: " + value);
+	//console.log("MQTT message: " + message);
 
     var mqttTopic = 'end-waste-mqtt';
 	sendMQTT(mqttTopic, message);
