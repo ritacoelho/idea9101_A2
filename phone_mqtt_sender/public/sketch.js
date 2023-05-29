@@ -51,7 +51,7 @@ let tryAgain;
 let next;
 let playAgain;
 
-let state = 3; //0 wrong, 1 right, 2 playing, 3 won
+let state = 2; //0 wrong, 1 right, 2 playing, 3 won
 
 function preload() {
   // Load the model
