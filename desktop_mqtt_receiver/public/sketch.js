@@ -31,8 +31,10 @@ var socket;
 // let currentMode = 0;
 // let totalMode = 5;
 
-let currentScore = 0;
-let totalScore = 5;
+let currentMode = 0;
+let totalMode = 6;
+
+let currentScore;
 
 // let planetStage = 0;
 let planets = [];
@@ -47,7 +49,7 @@ function setup() {
 	/////////////////////////////////////////////
 	// FIXED SECION - END
 	/////////////////////////////////////////////
-	noLoop();
+	// noLoop();
 }
 
 function preload() {
@@ -57,7 +59,7 @@ function preload() {
 function jsonCallback(data) {
 	planets = data.map((planet) => {
 		return {
-			planetScore: planet.currentScore,
+			// planetScore: planet.currentScore,
 			planetDescription: planet.description,
 			planetImage: loadImage(planet.url),
 		};
@@ -72,24 +74,32 @@ function jsonCallback(data) {
 /////////////////////////////////////////////
 
 function draw() {
-	planetRender();
-}
+	// planetRender();
 
-function planetRender() {
-	// create the image
-	// if true then add 1
-	// if false then reduce
-	// if -1 fail
-
-	if (currentScore < totalScore) {
+	if ((currentMode) => 0) {
+		clear();
 		planetView();
 		stepper();
-	} else if (currentScore <= 0) {
+	} else {
 		planetDestroy();
 	}
-
-	// planetDestroy();
 }
+
+// function planetRender() {
+// 	// create the image
+// 	// if true then add 1
+// 	// if false then reduce
+// 	// if -1 fail
+
+// 	if (currentMode < totalMode) {
+// 		planetView();
+// 		stepper();
+// 	} else if (currentMode <= 0) {
+// 		planetDestroy();
+// 	}
+
+// 	// planetDestroy();
+// }
 
 function stepper() {
 	// rect(x, y, w, [h], [tl], [tr], [br], [bl])
@@ -102,22 +112,14 @@ function stepper() {
 	fill("ffffff");
 	stroke("red");
 	strokeWeight(2);
-	rect(
-		60,
-		20,
-		width / 1.1 / (totalScore - currentScore),
-		40 * (currentScore + 1),
-		40,
-		20,
-		20
-	);
+	rect(60, 20, (width - 140) / (totalMode - currentMode), 40, 40, 20, 20);
 
 	noStroke();
 	let xPos = 65;
 	let yPos = 80;
 	for (let i = 0; i <= 5; i++) {
 		text(i, xPos, yPos);
-		xPos += width / 1.1 / (totalScore - currentScore) - 3;
+		xPos += width / totalMode + 20;
 	}
 }
 
@@ -127,7 +129,7 @@ function planetView() {
 
 	// for (let i = 0; i < planets.length; i++) {
 	image(
-		planets[currentScore].planetImage,
+		planets[currentMode].planetImage,
 		width / 4,
 		height / 4,
 		width / 2,
@@ -141,7 +143,7 @@ function planetView() {
 
 	fill("#ffffff");
 	textSize(20);
-	text(planets[currentScore].planetDescription, width / 1.5, 250);
+	text(planets[currentMode].planetDescription, width / 1.5, 250);
 	// }
 }
 
@@ -194,5 +196,17 @@ function receiveMqtt(data) {
 	if (topic.includes("end-waste-mqtt")) {
 		messageSplit = message.split(";");
 		//do what you gotta do with the message, you'll hopefully just receive a number between 0-5 that pertains to the current score
+
+		//0 wrong, 1 right, 2 playing, 3 won
+		// let currentScore = messageSplit[0].trim();
+		currentScore = messageSplit[0].trim();
+
+		if (currentMode <= currentScore) {
+			currentMode = currentScore;
+		} else if (currentScore <= 0) {
+			currentMode = 0;
+		}
+
+		console.log(currentScore);
 	}
 }
