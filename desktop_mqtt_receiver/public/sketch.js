@@ -28,22 +28,31 @@ var socket;
 // CUSTOMIZABLE SECTION - BEGIN: ENTER OUR CODE HERE
 ////////////////////////////////////////////////////
 
-// let currentMode = 0;
-// let totalMode = 5;
+let width, height;
 
-let currentMode = 0;
+let currentMode;
 let totalMode = 6;
 
-let currentScore;
+let currentScore = 0;
 
 // let planetStage = 0;
 let planets = [];
+
+let trees = [];
+
+let failSound;
+let stepSound;
+let winSound;
+let backSound;
 
 function setup() {
 	/////////////////////////////////////////////
 	// FIXED SECION - START: DO NOT CHANGE IT
 	/////////////////////////////////////////////
 	createCanvas(windowWidth, windowHeight);
+	width = windowWidth;
+	height = windowHeight;
+	getAudioContext().resume();
 
 	setupMqtt();
 	/////////////////////////////////////////////
@@ -54,6 +63,15 @@ function setup() {
 
 function preload() {
 	loadJSON("./planet.json", "json", jsonCallback);
+	for(let i = 1; i < 7; i++){
+		let img = loadImage(`images/trees${i}.png`);
+		trees.push(img);
+	}
+
+	failSound = loadSound('sounds/fail.wav');
+	stepSound = loadSound('sounds/step.wav');
+	winSound = loadSound('sounds/win.wav');
+	backSound = loadSound('sounds/back.wav');
 }
 
 function jsonCallback(data) {
@@ -83,6 +101,18 @@ function draw() {
 	} else {
 		planetDestroy();
 	}
+
+	// if(currentMode == 0 && !failSound.isPlaying()) {
+	// 	failSound.loop = false;
+	// 	failSound.play();
+	// } else if (currentMode == 5 && !winiSound.isPlaying()) {
+	// 	winSound.loop = false;
+	// 	winSound.play();
+	// } else if (!stepSound.isPlaying()){
+	// 	stepSound.loop = false;
+	// 	stepSound.play();
+	// }
+	
 }
 
 // function planetRender() {
@@ -107,19 +137,23 @@ function stepper() {
 	noFill();
 	// fill("ffffff");
 	// rect(30, 20, 55, 55, 20, 15, 10, 5);
-	rect(60, 20, width / 1.1, 40, 40, 20, 20);
+	rect(60, 80, width*0.9, 40, 40, 50, 20);
 
-	fill("ffffff");
-	stroke("red");
-	strokeWeight(2);
-	rect(60, 20, (width - 140) / (totalMode - currentMode), 40, 40, 20, 20);
+	fill("#9C79FF");
+	//stroke("red");
+	strokeWeight(1);
+	let progress = map(currentScore, 0, 100, 20, width*0.9);
+	rect(60, 80, progress, 40, 40, 50, 20);
 
 	noStroke();
-	let xPos = 65;
-	let yPos = 80;
-	for (let i = 0; i <= 5; i++) {
-		text(i, xPos, yPos);
-		xPos += width / totalMode + 20;
+	fill("#FFFFFF");
+	textFont('Gaegu');
+
+	let yPos = 60;
+	for (let i = 1; i <= 6; i++) {
+		let scale = map(i, 1, 6, 0, 100)
+		let xPos = map(i, 1, 6, 65, width*0.9)
+		text(`${scale}%`, xPos, yPos);
 	}
 }
 
@@ -129,7 +163,7 @@ function planetView() {
 
 	// for (let i = 0; i < planets.length; i++) {
 	image(
-		planets[currentMode].planetImage,
+		planets[currentMode? currentMode : 0].planetImage,
 		width / 4,
 		height / 4,
 		width / 2,
@@ -141,9 +175,15 @@ function planetView() {
 		CONTAIN
 	);
 
+	//trees
+	push();
+	imageMode(CENTER);
+	image(trees[currentMode? currentMode : 0], width/2, height/2);
+	pop();
+
 	fill("#ffffff");
 	textSize(20);
-	text(planets[currentMode].planetDescription, width / 1.5, 250);
+	text(planets[currentMode? currentMode : 0].planetDescription, width / 1.5, 250);
 	// }
 }
 
@@ -193,20 +233,30 @@ function receiveMqtt(data) {
 	var message = data[1];
 
 	//Receive message and synthesize data
-	if (topic.includes("end-waste-mqtt")) {
+	if (topic.includes("nurture-nature-mqtt")) {
 		messageSplit = message.split(";");
-		//do what you gotta do with the message, you'll hopefully just receive a number between 0-5 that pertains to the current score
 
-		//0 wrong, 1 right, 2 playing, 3 won
-		// let currentScore = messageSplit[0].trim();
 		currentScore = messageSplit[0].trim();
-
-		if (currentMode <= currentScore) {
-			currentMode = currentScore;
-		} else if (currentScore <= 0) {
-			currentMode = 0;
+		
+		let tempMode = Math.floor(map(currentScore, 0, 100, 0, 5));
+		console.log(tempMode, currentMode);
+		if(tempMode == 5 && tempMode != currentMode){
+			console.log("winSound");
+			winSound.setLoop(false);
+			winSound.play();
+		} else if(tempMode == 0 && tempMode != currentMode) {
+			console.log("failSound");
+			failSound.setLoop(false);
+			failSound.play();
+		} else if(tempMode != 0 && tempMode != 5 && tempMode > currentMode) {
+			console.log("stepSound");
+			stepSound.setLoop(false);
+			stepSound.play();
+		} else if(tempMode != 0 && tempMode != 5 && tempMode < currentMode) {
+			console.log("backSound");
+			backSound.setLoop(false);
+			backSound.play();
 		}
-
-		console.log(currentScore);
+		currentMode = Math.floor(tempMode);
 	}
 }

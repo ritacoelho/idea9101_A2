@@ -54,7 +54,7 @@ function newMqttConnectionSuccess() {
 	);
 
 	// Subscribe to message
-	const topicList = ["end-waste-mqtt"];
+	const topicList = ["nurture-nature-mqtt"];
 	mqttClient.subscribe(topicList, { qos: 1 }, () => {
 		console.log(`Subscribed to topics '${topicList}'`);
 	});
