@@ -30,16 +30,26 @@ var socket;
 
 let width, height;
 
+//variables to store previous and current mode - or stage 
+//they are useful to determine which graphics and text to display, as long as which sounds to play.
 let currentMode;
-let totalMode = 6;
+let tempMode;
 
+//current score out of 100
 let currentScore = 0;
 
-// let planetStage = 0;
+//array to store world graphics and informatioioni
 let planets = [];
-
+//array to store tree images
 let trees = [];
 
+//variables for sound files
+/* Sound rreferences
+Eponn. (2022). Button UI App. Freesound. https://freesound.org/people/Eponn/sounds/619835/
+Eponn. (2022). Achievement Happy Beeps Jingle. Freesound. https://freesound.org/people/Eponn/sounds/619835/
+SergeQuadrado. (2019). Miracle Harp [DDMyzik Logos]. Freesound. https://freesound.org/people/SergeQuadrado/sounds/460893/
+Goik. (2017). Gamepack1 -Mystery failed.wav [Gamepack Vol. 1]. Freesound. https://freesound.org/people/AdamGoik/sounds/394485/ 
+*/
 let failSound;
 let stepSound;
 let winSound;
@@ -52,39 +62,41 @@ function setup() {
 	createCanvas(windowWidth, windowHeight);
 	width = windowWidth;
 	height = windowHeight;
+
+	//attempt to get rid of Google's block of audio playback before user interaction - doesn't seem to have worked
 	getAudioContext().resume();
 
 	setupMqtt();
 	/////////////////////////////////////////////
 	// FIXED SECION - END
 	/////////////////////////////////////////////
-	// noLoop();
 }
 
 function preload() {
+	//preloading planet graphics and information
 	loadJSON("./planet.json", "json", jsonCallback);
 	for(let i = 1; i < 7; i++){
 		let img = loadImage(`images/trees${i}.png`);
 		trees.push(img);
 	}
 
+	//preloading sound files
 	failSound = loadSound('sounds/fail.wav');
 	stepSound = loadSound('sounds/step.wav');
 	winSound = loadSound('sounds/win.wav');
 	backSound = loadSound('sounds/back.wav');
 }
 
+//maps planet data into array
 function jsonCallback(data) {
 	planets = data.map((planet) => {
 		return {
-			// planetScore: planet.currentScore,
 			planetDescription: planet.description,
 			planetImage: loadImage(planet.url),
 		};
 	});
 
-	console.log(planets);
-	// console.log(planetScore);
+	//console.log(planets);
 }
 
 /////////////////////////////////////////////
@@ -92,55 +104,18 @@ function jsonCallback(data) {
 /////////////////////////////////////////////
 
 function draw() {
-	// planetRender();
-
-	if ((currentMode) => 0) {
-		clear();
-		planetView();
-		stepper();
-	} else {
-		planetDestroy();
-	}
-
-	// if(currentMode == 0 && !failSound.isPlaying()) {
-	// 	failSound.loop = false;
-	// 	failSound.play();
-	// } else if (currentMode == 5 && !winiSound.isPlaying()) {
-	// 	winSound.loop = false;
-	// 	winSound.play();
-	// } else if (!stepSound.isPlaying()){
-	// 	stepSound.loop = false;
-	// 	stepSound.play();
-	// }
-	
+	clear();
+	stepper();
+	planetView();
 }
 
-// function planetRender() {
-// 	// create the image
-// 	// if true then add 1
-// 	// if false then reduce
-// 	// if -1 fail
-
-// 	if (currentMode < totalMode) {
-// 		planetView();
-// 		stepper();
-// 	} else if (currentMode <= 0) {
-// 		planetDestroy();
-// 	}
-
-// 	// planetDestroy();
-// }
-
+//draws and fills the progress graphic based on world state
 function stepper() {
-	// rect(x, y, w, [h], [tl], [tr], [br], [bl])
 	stroke("ffffff");
 	noFill();
-	// fill("ffffff");
-	// rect(30, 20, 55, 55, 20, 15, 10, 5);
 	rect(60, 80, width*0.9, 40, 40, 50, 20);
 
 	fill("#9C79FF");
-	//stroke("red");
 	strokeWeight(1);
 	let progress = map(currentScore, 0, 100, 20, width*0.9);
 	rect(60, 80, progress, 40, 40, 50, 20);
@@ -151,17 +126,14 @@ function stepper() {
 
 	let yPos = 60;
 	for (let i = 1; i <= 6; i++) {
-		let scale = map(i, 1, 6, 0, 100)
-		let xPos = map(i, 1, 6, 65, width*0.9)
+		let scale = map(i, 1, 6, 0, 100);
+		let xPos = map(i, 1, 6, 65, width*0.9);
 		text(`${scale}%`, xPos, yPos);
 	}
 }
 
+//displays the appropriate world and trees graphics based on world state
 function planetView() {
-	// text
-	// text(str, x, y, [x2], [y2]);
-
-	// for (let i = 0; i < planets.length; i++) {
 	image(
 		planets[currentMode? currentMode : 0].planetImage,
 		width / 4,
@@ -184,36 +156,6 @@ function planetView() {
 	fill("#ffffff");
 	textSize(20);
 	text(planets[currentMode? currentMode : 0].planetDescription, width / 1.5, 250);
-	// }
-}
-
-function planetDestroy() {
-	// rect(x, y, w, [h], [tl], [tr], [br], [bl])
-	stroke("ffffff");
-	noFill();
-	// fill("ffffff");
-	// rect(30, 20, 55, 55, 20, 15, 10, 5);
-	stroke("red");
-	fill("#FFCCCB");
-	rect(60, 20, width / 1.1, 40, 40, 20, 20);
-
-	image(
-		planets[0].planetImage,
-		width / 4,
-		height / 4,
-		width / 2,
-		height / 2,
-		0,
-		0,
-		planets.width,
-		planets.height,
-		CONTAIN
-	);
-
-	noStroke();
-	fill("#ffffff");
-	textSize(20);
-	text("You Lose. Try Again😭", width / 1.5, 250);
 }
 
 ////////////////////////////////////////////////////
@@ -238,8 +180,10 @@ function receiveMqtt(data) {
 
 		currentScore = messageSplit[0].trim();
 		
-		let tempMode = Math.floor(map(currentScore, 0, 100, 0, 5));
-		console.log(tempMode, currentMode);
+		tempMode = Math.floor(map(currentScore, 0, 100, 0, 5));
+		//console.log(tempMode, currentMode);
+
+		//determine which soundfile to play based on user progress
 		if(tempMode == 5 && tempMode != currentMode){
 			console.log("winSound");
 			winSound.setLoop(false);
@@ -257,6 +201,8 @@ function receiveMqtt(data) {
 			backSound.setLoop(false);
 			backSound.play();
 		}
+
+		//update currentMode
 		currentMode = Math.floor(tempMode);
 	}
 }

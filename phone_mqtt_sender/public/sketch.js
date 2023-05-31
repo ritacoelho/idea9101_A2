@@ -11,7 +11,12 @@
   Author: Luke Hespanhol
   Updated by: Andres Pinilla
   Date: April 2023
+
+  Further adapted as we did not need the mouse trajectory to be included in the classification of the length of the hold.
+  Updated by: Rita Coelho
+  Date: May 2023
 ***********************************************************************/
+
 /*
   Disabling canvas scroll for better experience on mobile interfce.
   Source: 
@@ -101,23 +106,15 @@ document.addEventListener('touchstart', function(e) {
   let collectingGesture = false;
   let timeGestureStarted;
   let gestureDuration;
-  let minX = 0, maxX = 0;
-  let minY = 0, maxY = 0;
-  let ampX = 0, ampY = 0;
-  
-  let NUM_IMAGES = 11;
-  let faces = [];
-  let averageLevel = 0;
-  let font;
-  let settings;
 
-  // Button variables for new seed and watering
-  let seedButton;
+  // Button variables for watering
   let waterButton;
 
+  // Variables to keep current state of the world and timestamp for last time water button was released
   let worldState = 0;
   let lastRelease = Date.now();
 
+  // To store the images for canister and pointer hand
   let waterCanImg;
   let pointerImg;
   
@@ -125,6 +122,7 @@ document.addEventListener('touchstart', function(e) {
   // PRELOAD
   ////////////////////////////////////////////////////////
   function preload() {
+	//preloading model settings and images
 	settings = loadJSON('./settings/settings.json');
 	console.log('settings file loaded');
   
@@ -139,12 +137,9 @@ document.addEventListener('touchstart', function(e) {
   function setup() {
   createCanvas(windowWidth, windowHeight);
   
-  // Font: Swansea, by Roger White, retrieved March-2022 from: https://www.fontspace.com/swansea-font-f5873
-  //font = loadFont('assets/Swansea-q3pd.ttf');
-  
   // Set options used for collection or prediction
   let options = {
-	inputs: ['gestureDuration', 'ampX', 'ampY'],
+	inputs: ['gestureDuration'],
 	outputs: ['levelPercentage'],
 	task: 'regression',
 	debug: 'true'
@@ -174,10 +169,10 @@ document.addEventListener('touchstart', function(e) {
   trainButton = new ControlButton('TRAIN', firstButtonX + 3*buttonWidth, buttonY, buttonWidth, buttonHeight);
   
 
-  //Create UI buttons
-
+  //Create the UI button
   waterButton = createButton("");
   waterButton.position(width/2 - width*.125, height/2 + 150);
+  //in order to activate model training, the two next lines need to be commented out and callback functions need to be renamed to touchStarted (line 256) and touchEnded (line 294) respectively
   waterButton.touchStarted(startCollecting);
   waterButton.touchEnded(endCollecting);
   waterButton.class("water-button");
@@ -206,13 +201,9 @@ document.addEventListener('touchstart', function(e) {
 	if (collectingGesture) {
 		fill(0, 50);
 		ellipse(mouseX, mouseY, 30, 30);
-	
-		minX = min(int(minX), mouseX);
-		minY = min(int(minY), mouseY);
-		maxX = max(int(maxX), mouseX);
-		maxY = max(int(maxY), mouseY);
 	}
 	
+	// Display UI when predicting (not training)
 	if(state == 'prediction'){
 		background("#5E6FFD");
 		imageMode(CENTER);
@@ -236,13 +227,14 @@ document.addEventListener('touchstart', function(e) {
 	}
   }
 
+  //Function that slowly decrements world state if user is not interacting for longer than 5 seconds
   function decay() {
-	console.log(Date.now()-lastRelease);
 	if(worldState > 0.05 && Date.now() - lastRelease > 5000 && !collectingGesture){
 		worldState -= 0.05;
 	}
   }
 
+  //Function that maps last interaction as a value between 0 and 20 and increments it to world state (capping between 0 and 100)
   function updateWorldState(level) {
 	let impact = map(level, 0, 100, 1, 20);
 	if(worldState+impact < 100) {
@@ -321,10 +313,6 @@ document.addEventListener('touchstart', function(e) {
   function startProcessingSingleData() {
 	timeGestureStarted = millis();
 	collectingGesture = true;
-	minX = mouseX;
-	maxX = minX;
-	minY = mouseY;
-	maxY = minY;
   }
   
   ////////////////////////////////////////////////////////
@@ -339,13 +327,9 @@ document.addEventListener('touchstart', function(e) {
 	if (state == 'collection') {
 		if (collectingGesture && (targetLabel.trim() != '')) {
 		gestureDuration = int(millis() - timeGestureStarted);
-		ampX = (maxX - minX);
-		ampY = (maxY - minY);
 	
 		let inputs = {
 			gestureDuration: gestureDuration, 
-			ampX: ampX, 
-			ampY: ampY
 		}
 	
 		// Map target label to a percentage
@@ -363,23 +347,19 @@ document.addEventListener('touchstart', function(e) {
 		}
 	
 		model.addData(inputs, target);
-		console.log("Data added: tagetLabel: " + targetLabel + "; gestureDuration: " + gestureDuration + "; ampX: " + ampX + "; ampY: " + ampY);
+		console.log("Data added: tagetLabel: " + targetLabel + "; gestureDuration: " + gestureDuration);
 		}
 	} else if (state == 'prediction') {
 		gestureDuration = int(millis() - timeGestureStarted);
-		ampX = (maxX - minX);
-		ampY = (maxY - minY);
 	
 		let inputs = {
 		gestureDuration: gestureDuration, 
-		ampX: ampX, 
-		ampY: ampY
 		}
 		model.predict(inputs, gotResults);
 	
 	}
 	collectingGesture = false;
-	lastRelease = Date.now();
+	lastRelease = Date.now(); // update timestamp for last time button was released
   }
   
   
@@ -441,13 +421,6 @@ document.addEventListener('touchstart', function(e) {
 	updateWorldState(levelPercentage);
   }
   
-  //function displayImage(/*index*/) {
-  // var img = faces[index];
-  //background(255);
-  // imageMode(CENTER);
-  // image(img, windowWidth/2, windowHeight/2, windowWidth/3, windowWidth/3); 
-  //}
-  
   ////////////////////////////////////////////////////
   // CUSTOMIZABLE SECTION - END: ENTER OUR CODE HERE
   ////////////////////////////////////////////////////
@@ -457,14 +430,12 @@ document.addEventListener('touchstart', function(e) {
 	This function sends a MQTT message to server
   ***********************************************************************/
   function sendMessage() {
-	//message sent with water level and timestamp
+	//message sent with water level
 	let msgStr = Math.floor(worldState).toString();
   
-	//console.log(msgStr);
-  
-	  let postData = JSON.stringify({ id: 1, 'message': msgStr});
-  
-	  xmlHttpRequest.open("POST", HOST + '/sendMessage', false);
-	  xmlHttpRequest.setRequestHeader("Content-Type", "application/json");
-	  xmlHttpRequest.send(postData);
+	let postData = JSON.stringify({ id: 1, 'message': msgStr});
+
+	xmlHttpRequest.open("POST", HOST + '/sendMessage', false);
+	xmlHttpRequest.setRequestHeader("Content-Type", "application/json");
+	xmlHttpRequest.send(postData);
   }
