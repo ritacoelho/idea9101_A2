@@ -12,11 +12,11 @@ var PORT = 3300;
 // KEEP IT COMMENTED OUT IF RUNNING FROM MOBILE
 ///////////////////////////////////////////////////////////
 //Import Express and initialise the web server
-var express = require('express');
-var app = express();
-var server = app.listen(PORT);
-app.use(express.static('public'));
-console.log('Node.js Express server running on port ' + PORT);
+// var express = require('express');
+// var app = express();
+// var server = app.listen(PORT);
+// app.use(express.static('public'));
+// console.log('Node.js Express server running on port ' + PORT);
 ///////////////////////////////////////////////////////////
 // UNCOMMENT THIS SECTION IF RUNNING FROM DESKTOP - END
 ///////////////////////////////////////////////////////////
@@ -27,25 +27,25 @@ console.log('Node.js Express server running on port ' + PORT);
 //
 // KEEP IT COMMENTED OUT IF RUNNING FROM DESKTOP
 ///////////////////////////////////////////////////////////
-// var https = require('https');
-// var fs = require('fs');
-// var express = require('express');
-// var app = express();
+var https = require('https');
+var fs = require('fs');
+var express = require('express');
+var app = express();
 
-// https
-//   .createServer(
-// 		// Provide the private and public key to the server by reading each
-// 		// file's content with the readFileSync() method.
-//     {
-//       key: fs.readFileSync("key.pem"),
-//       cert: fs.readFileSync("cert.pem"),
-//     },
-//     app
-//   )
-//   .listen(PORT, () => {
-//     console.log("Node.js Express HTTPS server is runing at port " + PORT);
-//   });
-// app.use(express.static('public'));
+https
+  .createServer(
+		// Provide the private and public key to the server by reading each
+		// file's content with the readFileSync() method.
+    {
+      key: fs.readFileSync("key.pem"),
+      cert: fs.readFileSync("cert.pem"),
+    },
+    app
+  )
+  .listen(PORT, () => {
+    console.log("Node.js Express HTTPS server is runing at port " + PORT);
+  });
+app.use(express.static('public'));
 ///////////////////////////////////////////////////////////
 // UNCOMMENT THIS SECTION IF RUNNING FROM MOBILE - END
 ///////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ app.post('/sendMessage', function(request, response) {
 
 	//console.log("MQTT message: " + message);
 
-    var mqttTopic = 'end-waste-mqtt';
+    var mqttTopic = 'nurture-nature-mqtt';
 	sendMQTT(mqttTopic, message);
     response.end("");
 });
