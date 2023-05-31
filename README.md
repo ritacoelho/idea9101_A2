@@ -7,9 +7,11 @@ npm install
 npm start
 ```
 
-open browser in `localhost:3300`
-
 open browser in `localhost:3000`
+
+find IP address on the computer running the program, and on your mobile device connected to the same network:
+
+open browser in `[ip_address]:3300`
 
 ---
 
